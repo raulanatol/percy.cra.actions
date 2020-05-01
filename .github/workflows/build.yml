@@ -14,7 +14,7 @@ jobs:
       - name: Lint
         run: yarn lint
       - name: Test
-        run: yarn test
+        run: yarn test-ci
       - name: Slack Message action
         uses: raulanatol/slack-message-github-action@v1.0.0
         env:
