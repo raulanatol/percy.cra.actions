@@ -1,0 +1,25 @@
+name: build
+on:
+  push:
+    branches_ignore:
+      - master
+      - develop
+jobs:
+  default:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install
+        run: yarn
+      - name: Lint
+        run: yarn lint
+      - name: Test
+        run: yarn test
+      - name: Slack Message action
+        uses: raulanatol/slack-message-github-action@v1.0.0
+        env:
+          WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
+          SLACK_CHANNEL: ${{secrets.SLACK_NOTIFICATION_CHANNEL}}
+          MESSAGE: Compilation ends
+          STATUS: ${{job.status}}
+          if: failure()

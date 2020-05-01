@@ -1,0 +1,32 @@
+name: build
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - pre-release
+jobs:
+  default:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install
+        run: yarn
+      - name: Lint
+        run: yarn lint
+      - name: Test
+        run: yarn test
+      - name: Percy Test
+        uses: percy/storybook-action@v0.1.1
+        with:
+          custom-command: 'yarn snapshot'
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+      - name: Slack Message action
+        uses: raulanatol/slack-message-github-action@v1.0.0
+        env:
+          WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
+          SLACK_CHANNEL: ${{secrets.SLACK_NOTIFICATION_CHANNEL}}
+          MESSAGE: Compilation ends
+          STATUS: ${{job.status}}
+          if: failure()
